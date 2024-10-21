@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Музыка</title>
+    <style>
+        .parametersSearch {
+            display: flex;
+            list-style-type: none;
+        }
+
+            .parametersSearch li {
+                position: relative;
+                width: 90px;
+                text-align:center;
+            }
+        .dropdown {
+            margin-block-start: 15px;
+            color:aqua;
+        }
+        .dropdown-content {
+            display: none;
+            color:black;
+            
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            color: greenyellow;
+        }
+
+        .dropdown-content-element {
+
+            margin-block-end: 0;
+        }
+        .search-input {
+            position: fixed;
+            top: 140px;
+        }
+        .add-bth {
+            position: fixed;
+            right: 20px;
+            top: 20px
+        }
+        .element-add-main-menu {
+            display: flex;
+            list-style-type: none;
+            padding-inline-start: 0
+        }
+
+            .element-add-main-menu li {
+                position: relative;
+                width: 90px;
+                text-align: center;
+            }
+                .element-add-main-menu li:hover, li.active {
+                    color: aqua;
+                }
+        .element-add-collection-menu {
+            display: flex;
+            list-style-type: none;
+            padding-inline-start: 0
+        }
+
+            .element-add-collection-menu li {
+                position: relative;
+                width: 90px;
+                text-align: center;
+            }
+
+                .element-add-collection-menu li:hover, li.active {
+                    color: aqua;
+                }
+        .element-add-collection-add-song {
+            display: flex;
+            list-style-type: none;
+            padding-inline-start: 0
+        }
+
+            .element-add-collection-add-song li {
+                position: relative;
+                width: 90px;
+                text-align: center;
+            }
+
+                .element-add-collection-add-song li:hover, li.active {
+                    color: aqua;
+                }
+        .modalWindowData{
+            position: relative;
+            top: 1px;
+            border-style: none;
+            margin:0;
+            padding:0;
+        }
+        .value-parametr {
+            margin-right: 20px;
+            margin-block-start: 3px;
+        }
+        .value-input {
+            width: 200px;
+            height: 20px;
+            margin-block-end: 5px;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body style="background-color:gray">
+    <h1>Каталог Музыки</h1>
+    <div style="display:flex">
+        <h2 style=" margin-block-start: 25px">Найди то, что хочется ТЕБЕ:</h2>
+        <! --  ПОИСК  -->
+        <ul class="parametersSearch" id="criterion_search">
+            <li>
+                <div class="dropdown">
+                    Музыка
+                    <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Автор')">
+                            Автор
+                        </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Жанр')">
+                            Жанр
+                        </p>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Автор')">Автор</p>
+            </li>
+            <li>
+                <div class="dropdown">
+                    Альбом
+                    <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Автор')">
+                            Автор
+                        </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Жанр')">
+                            Жанр
+                        </p>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    Сборник
+                    <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Эпоха')">
+                            Эпоха
+                        </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Жанр')">
+                            Жанр
+                        </p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <! --  ФОРМА ПОИСКА  -->
+    <form method="post" class="search-input">
+        <div>Поиск по <span style="color: greenyellow;" id="selectid_criterion_search"></span> </div>
+        <input id="search" style="margin-block-start:10px" />
+        <input type="button" value="Поиск" onclick="Search()" />
+    </form>
+    <input type="button" value="Добавить" onclick="window.windowAddData.showModal()" class="add-bth" />
+
+    <! -- ДОБАВЛЕНИЕ ЧЕГО-ЛИБО -->
+    <dialog id="windowAddData" style="position: relative; padding-bottom: 25px">
+        <h2>Добавление информации в каталог</h2>
+        <ul class="element-add-main-menu" onclick=" ChangeActiveMainMenu()">
+            <li onclick="CloseMainWindow(); window.windowArtist.show()">
+                Автор
+            </li>
+            <li onclick="CloseMainWindow(); window.windowSong.show()">
+                Песня
+            </li>
+            <li onclick="CloseMainWindow(); window.windowAlbum.show()">
+                Альбом
+            </li>
+            <li onclick="CloseMainWindow(); window.windowCollection.show()">
+                Сборник
+            </li>
+        </ul>
+
+        <! -- ОКНО ДЛЯ ПЕВЦА -->
+        <dialog id="windowArtist" class="modalWindowData">
+            <div style="display: flex;">
+                <p class="value-parametr">Имя</p>
+                <input class="value-input" />
+            </div>
+        </dialog>
+
+        <! -- ОКНО ДЛЯ ПЕСНИ -->
+        <dialog id="windowSong" class="modalWindowData">
+            <div style="display: flex; ">
+                <p class="value-parametr">Название</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Артист</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Альбом</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Продолжительность</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Год релиза</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Жанр</p>
+                <input class="value-input" />
+            </div>
+        </dialog>
+
+        <! -- ОКНО ДЛЯ АЛЬБОМ -->
+        <dialog id="windowAlbum" class="modalWindowData">
+            <div style="display: flex; ">
+                <p class="value-parametr">Название</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Артист</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Год релиза</p>
+                <input class="value-input" />
+            </div>
+            <div style="display: flex;">
+                <p class="value-parametr">Жанр</p>
+                <input class="value-input" />
+            </div>
+        </dialog>
+        <! -- ОКНО ДЛЯ СБОРНИКА -->
+        <dialog id="windowCollection" class="modalWindowData">
+            <ul class="element-add-collection-menu" onclick="ChangeActiveCollectionMenu()">
+                <li style="width:auto" onclick="CloseCollectionWindow(); windowCollectionCreate.show()">
+                    Создать сборник
+                </li>
+                <li style="width:auto; margin-left:20px" onclick="CloseCollectionWindow(); windowCollectionAddSong.show()">
+                    Добавить песню в сборник
+                </li>
+            </ul>
+            <! -- ОКНО ДЛЯ СОЗДАНИЯ СБОРНИКА -->
+            <dialog id="windowCollectionCreate" class="modalWindowData">
+                <div style="display: flex; ">
+                    <p class="value-parametr">Название сборника</p>
+                    <input class="value-input" />
+                </div>
+                <ul class="element-add-collection-add-song" onclick="ChangeActiveCollectionTypeMenu()">
+                    <li style="width: auto;" onclick="CloseCollectionTypeWindow();windowCollectionEpoch.show()">
+                        Эпоха
+                    </li>
+                    <li style="width: auto; margin-left:20px" onclick="CloseCollectionTypeWindow(); window.windowCollectionGenre.show()">
+                        Жанр
+                    </li>
+                </ul>
+                <! -- ОКНО ДЛЯ СОЗДАНИЯ СБОРНИКА ПО ЭПОХЕ-->
+                <dialog id="windowCollectionEpoch" class="modalWindowData">
+                    <div style="display: flex; ">
+                        <p class="value-parametr">Жанр</p>
+                        <input class="value-input" style="margin-left:22px" />
+                    </div>
+                </dialog>
+                <! -- ОКНО ДЛЯ СОЗДАНИЯ СБОРНИКА ПО ЖАНРУ-->
+                <dialog id="windowCollectionGenre" class="modalWindowData">
+                    <div style="display: flex; ">
+                        <p class="value-parametr">Год релиза</p>
+                        <input class="value-input" />
+                    </div>
+                </dialog>
+            </dialog>
+            <! -- ОКНО ДЛЯ ДОБАВЛЕНИЯ ПЕСНИ В СБОРНИК-->
+            <dialog id="windowCollectionAddSong" class="modalWindowData">
+                <div style="display: flex; ">
+                    <p class="value-parametr">Название сборника</p>
+                    <input class="value-input" />
+                </div>
+                <div style="display: flex; ">
+                    <p class="value-parametr">Название песни</p>
+                    <input class="value-input" />
+                </div>
+                <div style="padding-bottom:20px">
+                    <input type="radio" id="epoch" name="typeCollection" value="Жанр" />
+                    <label for="epoch">Жанр</label>
+
+                    <input type="radio" id="genre" name="typeCollection" value="Эпоха" />
+                    <label for="genre">Эпоха</label>
+                </div>
+            </dialog>
+        </dialog>
+        <div style="position:absolute; bottom:5px">
+            <input type="button" value="Создать" onclick=""/>
+            <input type="button" value="Закрыть" onclick="CloseAllWindow()"  />
+        </div>
+    </dialog>
+    
+</body>
+</html>
+
+<script>
+    // выбор критериев поиска
+    function UpdateSearch(criterion, subCriterion) {
+        const searchText = subCriterion ? `${criterion} ${subCriterion}` : criterion;
+        document.getElementById('selectid_criterion_search').innerText = searchText;
+    }
+
+    // поиск
+    function Search() {
+
+    }
+    function ChangeActiveMainMenu() {
+        const listItems = document.querySelectorAll('.element-add-main-menu li')
+        listItems.forEach(item => {
+            item.addEventListener('click', () => {
+                listItems.forEach(i => i.classList.remove('active')); 
+                item.classList.add('active'); 
+            });
+        });
+    }
+    function ChangeActiveCollectionMenu() {
+        const listItems = document.querySelectorAll('.element-add-collection-menu li')
+        listItems.forEach(item => {
+            item.addEventListener('click', () => {
+                listItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    }
+    function ChangeActiveCollectionTypeMenu() {
+        const listItems = document.querySelectorAll('.element-add-collection-add-song li')
+        listItems.forEach(item => {
+            item.addEventListener('click', () => {
+                listItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    }
+    function CloseAllWindow() {
+        CloseMainWindow();
+        CloseCollectionWindow();
+        CloseCollectionTypeWindow();
+        windowAddData.close();
+    }
+    function CloseMainWindow() {
+        window.windowArtist.close();
+        window.windowSong.close();
+        window.windowAlbum.close();
+        window.windowCollection.close();
+    }
+    function CloseCollectionWindow() {
+        window.windowCollectionCreate.close();
+        window.windowCollectionAddSong.close();
+    }
+    function CloseCollectionTypeWindow() {
+        window.windowCollectionEpoch.close();
+        window.windowCollectionGenre.close();
+    }
+
+
+</script>
