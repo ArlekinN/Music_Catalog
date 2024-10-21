@@ -1,6 +1,4 @@
-﻿using Music_Catalog.Moduls;
-
-namespace ModulsDB
+﻿namespace ModulsDB
 {
     public class Artist
     {
