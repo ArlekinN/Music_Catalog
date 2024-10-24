@@ -18,5 +18,6 @@ namespace ModulsDB
             Id = id;
             Name = name;
         }
+        public Artist() { }
     }
 }
