@@ -1,30 +1,42 @@
-﻿namespace ModulsDB
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ModulsDB
 {
-    public enum Genre
-    {
-        Rock,
-        Pop
-    }
     public class Song
     {
-        private string id;
+        [Key]
+        private int Id;
+        [Required]
         public string Title { get; init; }
-        public Artist Artist { get; init; }
-        public Album Album { get; init; }
-
+        [ForeignKey("Artist")]
+        [Required]
+        public int id_Artist;
+        public virtual Artist Artist { get; set; }
+        [Required]
+        [ForeignKey("Album")]
+        public int id_Album;
+        public virtual Album Album { get; set; }
+        [ForeignKey("Genre")]
+        [Required]
+        public int id_Genre;
+        public virtual Genre Genre { get; set; }
+        [Required]
         public float Duration { get; init; }
+        [Required]
         public int YearRelease { get; init; }
-        public Genre Genre { get; init; }
+        [InverseProperty("Song")]
+        public HashSet<Collection> Collections { get; } = new();
 
-        public Song(string id, string title, Artist artist, Album album, float duration, int yearRelease, Genre genre)
+        public Song(int id, string title,int id_artist, int id_album, float duration, int yearRelease, int id_genre)
         {
-            this.id = id;
+            Id = id;
             Title = title;
-            Artist = artist;
-            Album = album;
+            id_Artist = id_artist;
+            id_Album = id_album;
             Duration = duration;
             YearRelease = yearRelease;
-            Genre = genre;
+            id_Genre = id_genre;
         }
     }
 }

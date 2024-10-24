@@ -1,22 +1,34 @@
-﻿namespace ModulsDB
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ModulsDB
 {
     public class Album
     {
-        private string id;
+        [Key]
+        private int Id { get; init; }
+        [Required]
         public string Title { get; init; }
+        [Required]
         public int YearRelease { get; init; }
-        public Genre Genre { get; init; }
-        public Artist Artist { get; init; }
-        public List<Song> Songs { get; set; }
+        [Required]
+        [ForeignKey("Genre")]
+        public int id_Genre;
+        public virtual Genre Genre { get; set; }
+        [Required]
+        [ForeignKey("Artist")]
+        public int id_Artist;
+        public virtual Artist Artist { get; set; }
+        [InverseProperty("Album")]
+        public HashSet<Song> Songs { get; } = new();
 
-        public Album(string id, string title, int yearRelease, Genre genre, Artist artist)
+        public Album(int id, string title, int yearRelease,int id_genre,int id_artist)
         {
-            this.id = id;
+            Id = id;
             Title = title;
             YearRelease = yearRelease;
-            Genre = genre;
-            Songs = new List<Song>();
-            Artist = artist;
+            id_Genre = id_genre;
+            id_Artist = id_artist;
         }
     }
 }

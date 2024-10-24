@@ -1,16 +1,22 @@
-﻿namespace ModulsDB
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ModulsDB
 {
     public class Artist
     {
-        private string id;
-        public string Name { get; init; }
-        public List<Album> Albums { get; set; }
-
-        public Artist(string id, string name)
+        [Key]
+        public int Id { get; init; }
+        [Required]
+        public string Name { get; init; } = "";
+        [InverseProperty("Artist")]
+        public HashSet<Album> Albums { get; } = new();
+        [InverseProperty("Artist")]
+        public HashSet<Song> Songs { get; } = new();
+        public Artist(int id, string name)
         {
-            this.id = id;
+            Id = id;
             Name = name;
-            Albums = new List<Album> { };
         }
     }
 }
