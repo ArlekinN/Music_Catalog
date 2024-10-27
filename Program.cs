@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Music_Catalog;
+using ModulsDB;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace App
@@ -17,7 +18,14 @@ namespace App
             app.UseDefaultFiles();
             app.UseStaticFiles();
             // получение данных
+            // артист
             app.MapGet("/api/artists", (ApplicationContext db) => db.Artists.ToList());
+            app.MapPost("/api/artists", async (Artist artist, ApplicationContext db) =>
+            {
+                await db.Artists.AddAsync(artist);
+                await db.SaveChangesAsync();
+                return artist;
+            });
 
             app.Run();
 

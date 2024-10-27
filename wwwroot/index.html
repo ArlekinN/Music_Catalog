@@ -62,12 +62,13 @@
         <input id="search" style="margin-block-start:10px" />
         <input type="button" value="Поиск" onclick="Search()" />
     </form>
+    <div id="resultsContainer" style="position:fixed; padding-top:25px"></div>
     <input type="button" value="Добавить" onclick="window.windowAddData.showModal()" class="add-bth" />
 
     <! -- ДОБАВЛЕНИЕ ЧЕГО-ЛИБО -->
     <dialog id="windowAddData" style="position: relative; padding-bottom: 25px">
         <h2>Добавление информации в каталог</h2>
-        <ul class="element-add-main-menu" onclick=" ChangeActiveMainMenu()">
+        <ul class="element-add-main-menu" onclick="ChangeActiveMainMenu()">
             <li onclick="CloseMainWindow(); window.windowArtist.show()">
                 Автор
             </li>
@@ -86,7 +87,7 @@
         <dialog id="windowArtist" class="modalWindowData">
             <div style="display: flex;">
                 <p class="value-parametr">Имя</p>
-                <input class="value-input" />
+                <input class="value-input"  id="value-artist-MArtist" type="text"/>
             </div>
         </dialog>
 
@@ -196,11 +197,11 @@
             </dialog>
         </dialog>
         <div style="position:absolute; bottom:5px">
-            <input type="button" value="Создать" onclick=""/>
-            <input type="button" value="Закрыть" onclick="CloseAllWindow()"  />
+            <input type="button" value="Создать" onclick="Create()" />
+            <input type="button" value="Закрыть" onclick="CloseAllWindow()" />
         </div>
     </dialog>
-    
+
 </body>
 </html>
 
@@ -215,6 +216,12 @@
     function Search() {
         var parametrSearch = document.getElementById('search').value;
         var parametrFilter = document.getElementById('selectid_criterion_search').innerText;
+        if (parametrFilter == "Автор") {
+            getArtists(parametrSearch);
+        }
+    }
+    window.onload = function () {
+        ChangeActiveMainMenu()
     }
     // изменение активного элемента меню
     function ChangeActiveMainMenu() {
@@ -264,6 +271,73 @@
     function CloseCollectionTypeWindow() {
         window.windowCollectionEpoch.close();
         window.windowCollectionGenre.close();
+    }
+
+    // получение артиста/ов
+    async function getArtists(parametrSearch) {
+        const response = await fetch("/api/artists", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
+        if (response.ok === true) {
+            var artists = await response.json();
+            if (parametrSearch != "") {
+                artists = artists.filter(artist => artist.name.toLowerCase().includes(parametrSearch.toLowerCase()));
+            }
+            if (artists.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>Нет результатов</td>`;
+                resultsContainer.appendChild(row);
+            }
+            else {
+                const table = document.createElement("table");
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Артист</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${artists.map(artist => `<tr><td>${artist.name}</td></tr>`).join('')}
+                    </tbody>
+                `;
+                document.getElementById('resultsContainer').appendChild(table);
+            }
+        }
+    }
+
+    // ДОБАВЛЕНИЕ
+    function Create() {
+        const itemMenu1 = document.querySelectorAll('.element-add-main-menu li.active')
+        const itemMenu2 = document.querySelectorAll('.element-add-collection-menu li')
+        const itemMenu3 = document.querySelectorAll('.element-add-collection-add-song li')
+        if (itemMenu1[0].innerText == "Автор") {
+            CreateArtist();
+        }
+    }
+    //артист
+    async function CreateArtist() {
+        const artistInput = document.getElementById("value-artist-MArtist")
+        if (artistInput) {
+            const artist = artistInput.value;
+            console.log(artist)
+            const response = await fetch("api/artists", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: artist
+                })
+            });
+            if (response.ok === true) {
+                
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
     }
 
 

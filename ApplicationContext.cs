@@ -24,7 +24,7 @@ namespace Music_Catalog
                     new Artist { Id = 3, Name = "LightMusic" }
             );
             modelBuilder.Entity<SongCollection>()
-        .HasKey(sc => new { sc.SongId, sc.CollectionId });
+                .HasKey(sc => new { sc.SongId, sc.CollectionId });
 
             modelBuilder.Entity<SongCollection>()
                 .HasOne(sc => sc.Song)
