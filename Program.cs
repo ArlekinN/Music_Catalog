@@ -13,7 +13,6 @@ namespace App
             var builder = WebApplication.CreateBuilder();
             string connection = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
-
             var app = builder.Build();
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -26,8 +25,16 @@ namespace App
                 await db.SaveChangesAsync();
                 return artist;
             });
+            app.MapGet("/api/albums", async (ApplicationContext db) => 
+            {
+                return await db.Albums
+                    .Include(album => album.Genre)
+                    .Include(album => album.Artist)
+                    .ToListAsync();
+            });
 
             app.Run();
+
 
 
         }

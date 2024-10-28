@@ -11,10 +11,12 @@ namespace ModulsDB
         public string Title { get; init; }
         [Required]
         public int YearRelease { get; init; }
+
         [Required]
         [ForeignKey("Genre")]
         public int Id_Genre { get; set; }
         public virtual Genre Genre { get; set; }
+
         [Required]
         [ForeignKey("Artist")]
         public int Id_Artist { get; set; }

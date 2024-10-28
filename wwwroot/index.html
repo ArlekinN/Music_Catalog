@@ -15,6 +15,9 @@
                 <div class="dropdown">
                     Музыка
                     <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Название')">
+                           Название
+                        </p>
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Автор')">
                             Автор
                         </p>
@@ -31,6 +34,9 @@
                 <div class="dropdown">
                     Альбом
                     <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Название')">
+                            Название
+                        </p>
                         <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Автор')">
                             Автор
                         </p>
@@ -44,6 +50,9 @@
                 <div class="dropdown">
                     Сборник
                     <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Название')">
+                            Название
+                        </p>
                         <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Эпоха')">
                             Эпоха
                         </p>
@@ -213,11 +222,17 @@
     }
 
     // поиск
-    function Search() {
+   async function Search() {
         var parametrSearch = document.getElementById('search').value;
         var parametrFilter = document.getElementById('selectid_criterion_search').innerText;
         if (parametrFilter == "Автор") {
-            getArtists(parametrSearch);
+            GetArtists(parametrSearch);
+        }
+        else if (parametrFilter.includes("Альбом")) {
+            if (parametrFilter.includes("Название")) {
+                GetAlbum_Title(parametrSearch)
+            }
+                
         }
     }
     window.onload = function () {
@@ -272,13 +287,13 @@
         window.windowCollectionEpoch.close();
         window.windowCollectionGenre.close();
     }
-
+    // ПОЛУЧЕНИЕ 
     // получение артиста/ов
-    async function getArtists(parametrSearch) {
+    async function GetArtists(parametrSearch) {
         const response = await fetch("/api/artists", {
             method: "GET",
             headers: { "Accept": "application/json" }
-        });
+        }); 
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.innerHTML = '';
         if (response.ok === true) {
@@ -301,6 +316,51 @@
                     </thead>
                     <tbody>
                         ${artists.map(artist => `<tr><td>${artist.name}</td></tr>`).join('')}
+                    </tbody>
+                `;
+                document.getElementById('resultsContainer').appendChild(table);
+            }
+        }
+    }
+    // Альбом
+    async function GetAlbum_Title(parametrSearch) {
+        const response = await fetch("/api/albums", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
+        if (response.ok === true) {
+            var albums = await response.json();
+            console.log(albums)
+            if (parametrSearch != "") {
+                albums = albums.filter(album => album.title.toLowerCase().includes(parametrSearch.toLowerCase()));
+            }
+            if (albums.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>Нет результатов</td>`;
+                resultsContainer.appendChild(row);
+            }
+            else {
+                const table = document.createElement("table");
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Артист</th>
+                            <th>Год релиза</th>
+                            <th>Жанр</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${albums.map(album => `
+                    <tr>
+                        <td>${album.title}</td>
+                        <td>${album.artist.name}</td>
+                        <td>${album.yearRelease}</td>
+                        <td>${album.genre.title}</td>
+                    </tr>
+                `).join('')}
                     </tbody>
                 `;
                 document.getElementById('resultsContainer').appendChild(table);

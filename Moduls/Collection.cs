@@ -20,7 +20,7 @@ namespace ModulsDB
         [ForeignKey("Genre")]
         public int? Id_Genre { get; set; }
         public virtual Genre Genre { get; set; }
-        public int? YearRelease { get; init; }
+        public int? Epoch { get; init; }
         [InverseProperty("Collection")]
         public HashSet<SongCollection> SongCollections { get; } = new();
         public Collection(int id, string title, TypeCollection typeCollection, int parametrOfTypeCollection)
@@ -31,11 +31,11 @@ namespace ModulsDB
             if(typeCollection== TypeCollection.Genre)
             {
                 Id_Genre = parametrOfTypeCollection;
-                YearRelease = null;
+                Epoch = null;
             }
             else
             {
-                YearRelease = parametrOfTypeCollection;
+                Epoch = parametrOfTypeCollection;
                 Id_Genre = null;
             } 
         }
