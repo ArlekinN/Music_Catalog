@@ -35,6 +35,13 @@ namespace App
                 if (artist == null) return Results.NotFound(new { message = "Артист не найден" });
                 return Results.Json(artist);
             });
+            app.MapGet("/api/artists/{name}", async (string name, ApplicationContext db) =>
+            {
+                Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Name == name);
+
+                if (artist == null) return Results.NotFound(new { message = "Артист не найден" });
+                return Results.Json(artist);
+            });
             // альбом
             app.MapGet("/api/albums", async (ApplicationContext db) => 
             {
@@ -64,7 +71,16 @@ namespace App
 
                 return Results.Json(genre);
             });
-            
+            app.MapGet("/api/genres/{title}", async (string title, ApplicationContext db) =>
+            {
+                Genre? genre = await db.Genres.FirstOrDefaultAsync(u => u.Title == title);
+
+                if (genre == null) return Results.NotFound(new { message = "Жанр не найден" });
+
+                return Results.Json(genre);
+            });
+
+
 
             // добавлени данных 
             // артист
