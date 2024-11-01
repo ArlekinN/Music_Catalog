@@ -132,19 +132,22 @@
         <dialog id="windowAlbum" class="modalWindowData">
             <div style="display: flex; ">
                 <p class="value-parametr">Название</p>
-                <input class="value-input" />
+                <input class="value-input" id="value-album-MAlbum" />
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Артист</p>
-                <input class="value-input" />
+                <div><input type="text" id="album-artist-search" placeholder="артист..." oninput="SearchArtist('album-artist-search','dropdown-results-album-artist')"></div>
+                <div id="dropdown-results-album-artist" class="dropdown-results"></div>
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Год релиза</p>
-                <input class="value-input" />
+                <input class="value-input" id="value-year-MAlbum" />
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Жанр</p>
-                <input class="value-input" />
+                <select name="genre" id="album-genre-select">
+                    <option value="">Выберите жанр</option>
+                </select>
             </div>
         </dialog>
         <! -- ОКНО ДЛЯ СБОРНИКА -->
@@ -236,7 +239,8 @@
         }
     }
     window.onload = function () {
-        ChangeActiveMainMenu()
+        ChangeActiveMainMenu();
+        GetGenres();
     }
     // изменение активного элемента меню
     function ChangeActiveMainMenu() {
@@ -332,7 +336,6 @@
         resultsContainer.innerHTML = '';
         if (response.ok === true) {
             var albums = await response.json();
-            console.log(albums)
             if (parametrSearch != "") {
                 albums = albums.filter(album => album.title.toLowerCase().includes(parametrSearch.toLowerCase()));
             }
@@ -350,7 +353,6 @@
                     });
                     if (responseAlbum.ok === true) {
                         var genre = await responseAlbum.json();
-                        console.log(genre);
                         album.genre = genre;
                     }
                     const responseArtist = await fetch(`/api/artists/${album.artistId}`, {
@@ -359,7 +361,6 @@
                     });
                     if (responseArtist.ok === true) {
                         var artist = await responseArtist.json();
-                        console.log(artist);
                         album.artist = artist;
                     }
                 }
@@ -388,6 +389,68 @@
             }
         }
     }
+    async function GetGenres() {
+        const response = await fetch("/api/genres", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (response.ok) {
+            const genres = await response.json();
+            const genreSelect = document.getElementById("album-genre-select");
+            genres.forEach(genre => {
+                const option = document.createElement("option");
+                option.value = genre.id;
+                option.textContent = genre.title;
+                genreSelect.appendChild(option);
+            });
+        }
+    }
+    let selectedArtistAlbum = null;
+    async function SearchArtist(idinput, iddropdown) {
+        const input = document.getElementById(idinput);
+        const dropdown = document.getElementById(iddropdown);
+        const query = input.value.trim().toLowerCase();
+
+        if (query.length < 1) { 
+            dropdown.style.display = "none";
+            return;
+        }
+        const response = await fetch(`/api/artists`);
+        if (response.ok) {
+            const artists = await response.json();
+
+            const filteredArtists = artists.filter(artist =>
+                artist.name.toLowerCase().includes(query)
+            );
+            dropdown.innerHTML = "";
+            if (filteredArtists.length > 0) {
+                dropdown.style.display = "block";
+                filteredArtists.forEach(artist => {
+                    const item = document.createElement("div");
+                    item.classList.add("dropdown-item");
+                    item.textContent = artist.name;
+                    item.onclick = () => {
+                        input.value = artist.name;
+                        dropdown.style.display = "none";
+                        selectedArtistAlbum = artist.id;
+                    };
+
+                    dropdown.appendChild(item);
+                });
+            } else {
+                dropdown.style.display = "none";
+            }
+        }
+    }
+
+    // Закрываем выпадающий список, если кликнули вне поля ввода
+    document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("dropdown-results-album-artist");
+        if (!event.target.closest("#album-artist-search")) {
+            dropdown.style.display = "none";
+        }
+    });
+
 
     // ДОБАВЛЕНИЕ
     function Create() {
@@ -396,6 +459,9 @@
         const itemMenu3 = document.querySelectorAll('.element-add-collection-add-song li')
         if (itemMenu1[0].innerText == "Автор") {
             CreateArtist();
+        }
+        else if (itemMenu1[0].innerText == "Альбом") {
+            CreateAlbum();
         }
     }
     //артист
@@ -419,5 +485,52 @@
             }
         }
     }
+    // албом
+    async function CreateAlbum() {
+        const albumInput = document.getElementById("value-album-MAlbum").value;
+        const yearInput = parseInt(document.getElementById("value-year-MAlbum").value);
+        const artistId = selectedArtistAlbum;
+        const selectElement = document.getElementById("album-genre-select");
+        const genreId = parseInt(selectElement.value);
+        var genre;
+        var artist;
+        const responseGenre = await fetch(`/api/genres/${genreId}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (responseGenre.ok === true) {
+            genre = await responseGenre.json();
+        }
+        const responseArtist = await fetch(`/api/artists/${artistId}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (responseArtist.ok === true) {
+            artist = await responseArtist.json();
+        }
+        if (albumInput && yearInput && artist && genre) { 
+            console.log(albumInput, yearInput, artist,genre)
+            const response = await fetch("api/albums", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: albumInput,
+                    yearRelease: yearInput,
+                    genreId: genreId,
+                    artistId: artistId
+                })
+            });
+            if (response.ok === true) {
 
+            }
+            else {
+                const errorText = await response.text(); 
+                console.error("Ошибка:", errorText); 
+            }
+        }
+        
+        
+
+    }
+    
 </script>

@@ -3,6 +3,7 @@ using Music_Catalog;
 using ModulsDB;
 
 using Music_Catalog.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace App
 {
@@ -27,12 +28,21 @@ namespace App
             // получение данных
             // артист
             app.MapGet("/api/artists", (ApplicationContext db) => db.Artists.ToList());
-           
+            app.MapGet("/api/artists/{id:int}", async (int id, ApplicationContext db) =>
+            {
+                Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (artist == null) return Results.NotFound(new { message = "Артист не найден" });
+                return Results.Json(artist);
+            });
+            // альбом
             app.MapGet("/api/albums", async (ApplicationContext db) => 
             {
                 return  await db.Albums.ToListAsync();
 
             });
+            // жанр 
+            app.MapGet("/api/genres", (ApplicationContext db) => db.Genres.ToList());
             app.MapGet("/api/genres/{id:int}", async (int id, ApplicationContext db) =>
             {
                 Genre? genre = await db.Genres.FirstOrDefaultAsync(u => u.Id == id);
@@ -41,13 +51,7 @@ namespace App
 
                 return Results.Json(genre);
             });
-            app.MapGet("/api/artists/{id:int}", async (int id, ApplicationContext db) =>
-            {
-                Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (artist == null) return Results.NotFound(new { message = "Артист не найден" });
-                return Results.Json(artist);
-            });
+            
 
             // добавлени данных 
             // артист
@@ -56,6 +60,13 @@ namespace App
                 await db.Artists.AddAsync(artist);
                 await db.SaveChangesAsync();
                 return artist;
+            });
+            // альбом
+            app.MapPost("/api/albums", async (ApplicationContext db, [FromBody] Album album) =>
+            {
+                await db.Albums.AddAsync(album);
+                await db.SaveChangesAsync();
+                return album;
             });
 
 

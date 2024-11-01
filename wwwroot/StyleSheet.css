@@ -108,3 +108,25 @@
     margin-block-end: 5px;
     margin-left: auto;
 }
+
+.dropdown-results {
+    position: absolute;
+    display: block;
+    margin-top: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 200px;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none; 
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+    }
+
