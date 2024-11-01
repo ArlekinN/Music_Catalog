@@ -41,6 +41,19 @@ namespace App
                 return  await db.Albums.ToListAsync();
 
             });
+            app.MapGet("/api/albums/{id:int}", async (int id, ApplicationContext db) =>
+            {
+                Album? album = await db.Albums.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (album == null) return Results.NotFound(new { message = "Альбом не найден" });
+                return Results.Json(album);
+            });
+            // музыка
+            app.MapGet("/api/songs", async (ApplicationContext db) =>
+            {
+                return await db.Songs.ToListAsync();
+
+            });
             // жанр 
             app.MapGet("/api/genres", (ApplicationContext db) => db.Genres.ToList());
             app.MapGet("/api/genres/{id:int}", async (int id, ApplicationContext db) =>

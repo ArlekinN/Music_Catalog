@@ -15,6 +15,7 @@
                 <div class="dropdown">
                     Музыка
                     <div class="dropdown-content">
+
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Название')">
                            Название
                         </p>
@@ -31,36 +32,10 @@
                 <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Автор')">Автор</p>
             </li>
             <li>
-                <div class="dropdown">
-                    Альбом
-                    <div class="dropdown-content">
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Название')">
-                            Название
-                        </p>
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Автор')">
-                            Автор
-                        </p>
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Альбом', 'Жанр')">
-                            Жанр
-                        </p>
-                    </div>
-                </div>
+                <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Альбом')">Альбом</p>
             </li>
             <li>
-                <div class="dropdown">
-                    Сборник
-                    <div class="dropdown-content">
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Название')">
-                            Название
-                        </p>
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Эпоха')">
-                            Эпоха
-                        </p>
-                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Жанр')">
-                            Жанр
-                        </p>
-                    </div>
-                </div>
+                <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Сборник')">Сборник</p>
             </li>
         </ul>
     </div>
@@ -68,10 +43,10 @@
     <! --  ФОРМА ПОИСКА  -->
     <form method="post" class="search-input">
         <div>Поиск по <span style="color: greenyellow;" id="selectid_criterion_search"></span> </div>
-        <input id="search" style="margin-block-start:10px" />
+        <input id="search" style="margin-block-start: 10px; z-index: 100" />
         <input type="button" value="Поиск" onclick="Search()" />
     </form>
-    <div id="resultsContainer" style="position:fixed; padding-top:25px"></div>
+    <div id="resultsContainer" style="position: relative; top: 25px; z-index: 99"></div>
     <input type="button" value="Добавить" onclick="window.windowAddData.showModal()" class="add-bth" />
 
     <! -- ДОБАВЛЕНИЕ ЧЕГО-ЛИБО -->
@@ -228,15 +203,15 @@
    async function Search() {
         var parametrSearch = document.getElementById('search').value;
         var parametrFilter = document.getElementById('selectid_criterion_search').innerText;
-        if (parametrFilter == "Автор") {
-            GetArtists(parametrSearch);
-        }
-        else if (parametrFilter.includes("Альбом")) {
-            if (parametrFilter.includes("Название")) {
-                GetAlbum_Title(parametrSearch)
-            }
-                
-        }
+       if (parametrFilter == "Автор") {
+           GetArtists(parametrSearch);
+       }
+       else if (parametrFilter.includes("Альбом")) {
+           GetAlbum(parametrSearch);
+       }
+       else if (parametrFilter.includes("Музыка")) {
+           GetMusic(parametrSearch);
+       }
     }
     window.onload = function () {
         ChangeActiveMainMenu();
@@ -292,7 +267,7 @@
         window.windowCollectionGenre.close();
     }
     // ПОЛУЧЕНИЕ 
-    // получение артиста/ов
+    // получение таблицы с артистами
     async function GetArtists(parametrSearch) {
         const response = await fetch("/api/artists", {
             method: "GET",
@@ -326,18 +301,19 @@
             }
         }
     }
-    // Альбом
-    async function GetAlbum_Title(parametrSearch) {
+    // получение таблицы с альбомами 
+    async function GetAlbum(parametrSearch) {
         const response = await fetch("/api/albums", {
             method: "GET",
             headers: { "Accept": "application/json" }
-        });
+        });;
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.innerHTML = '';
         if (response.ok === true) {
             var albums = await response.json();
             if (parametrSearch != "") {
                 albums = albums.filter(album => album.title.toLowerCase().includes(parametrSearch.toLowerCase()));
+                    
             }
             if (albums.length === 0) {
                 const row = document.createElement("tr");
@@ -389,6 +365,80 @@
             }
         }
     }
+    async function GetMusic(parametrSearch) {
+        const response = await fetch("/api/songs", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });;
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
+        if (response.ok === true) {
+            var songs = await response.json();
+            if (parametrSearch != "") {
+                songs = songs.filter(song => song.title.toLowerCase().includes(parametrSearch.toLowerCase()));
+            }
+            if (songs.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>Нет результатов</td>`;
+                resultsContainer.appendChild(row);
+            }
+            else {
+                for (const song of songs) {
+                    const responseGenre = await fetch(`/api/genres/${song.genreId}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (responseGenre.ok === true) {
+                        var genre = await responseGenre.json();
+                        song.genre = genre;
+                    }
+                    const responseArtist = await fetch(`/api/artists/${song.artistId}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (responseArtist.ok === true) {
+                        var artist = await responseArtist.json();
+                        song.artist = artist;
+                    }
+                    const responseAlbum = await fetch(`/api/albums/${song.albumId}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (responseAlbum.ok === true) {
+                        var album = await responseAlbum.json();
+                        song.album = album;
+                    }
+                }
+                const table = document.createElement("table");
+                table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Артист</th>
+                    <th>Год релиза</th>
+                    <th>Жанр</th>
+                    <th>Альбом</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${songs.map(song => `
+            <tr>
+                <td>${song.title}</td> 
+                <td>${song.artist.name}</td>
+                <td>${song.yearRelease}</td>
+                <td>${song.genre.title}</td>
+                <td>${song.album.title}</td>
+            </tr>
+        `).join('')}
+            </tbody>
+        `;
+                document.getElementById('resultsContainer').appendChild(table);
+            }
+        }
+
+    }
+
+    // получение списка жанров для выпадающего списка
     async function GetGenres() {
         const response = await fetch("/api/genres", {
             method: "GET",
@@ -405,6 +455,7 @@
             });
         }
     }
+    // поиск артиста по имени в input
     let selectedArtistAlbum = null;
     async function SearchArtist(idinput, iddropdown) {
         const input = document.getElementById(idinput);
@@ -492,24 +543,7 @@
         const artistId = selectedArtistAlbum;
         const selectElement = document.getElementById("album-genre-select");
         const genreId = parseInt(selectElement.value);
-        var genre;
-        var artist;
-        const responseGenre = await fetch(`/api/genres/${genreId}`, {
-            method: "GET",
-            headers: { "Accept": "application/json" }
-        });
-        if (responseGenre.ok === true) {
-            genre = await responseGenre.json();
-        }
-        const responseArtist = await fetch(`/api/artists/${artistId}`, {
-            method: "GET",
-            headers: { "Accept": "application/json" }
-        });
-        if (responseArtist.ok === true) {
-            artist = await responseArtist.json();
-        }
         if (albumInput && yearInput && artist && genre) { 
-            console.log(albumInput, yearInput, artist,genre)
             const response = await fetch("api/albums", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },

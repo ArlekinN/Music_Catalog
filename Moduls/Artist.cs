@@ -9,5 +9,10 @@ namespace ModulsDB
         public string Name { get; set; }
         public ICollection<Album> Albums { get; set; } 
         public ICollection<Song> Songs { get; set; }
+
+        public static implicit operator Artist(List<Artist> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
