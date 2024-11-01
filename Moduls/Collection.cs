@@ -1,44 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.Metrics;
-
+﻿
 namespace ModulsDB
 {
-    public enum TypeCollection
-    {
-        Genre,
-        Epoch
-    }
     public class Collection
     {
-        [Key]
-        public int Id { get; init; }
-        [Required]
-        public string Title { get; init; }
-        [Required]
-        public TypeCollection TypeCollection { get; init; }
-        [ForeignKey("Genre")]
-        public int? Id_Genre { get; set; }
-        public virtual Genre Genre { get; set; }
-        public int? Epoch { get; init; }
-        [InverseProperty("Collection")]
-        public HashSet<SongCollection> SongCollections { get; } = new();
-        public Collection(int id, string title, TypeCollection typeCollection, int parametrOfTypeCollection)
-        {
-            Id = id;
-            Title = title;
-            TypeCollection = typeCollection;
-            if(typeCollection== TypeCollection.Genre)
-            {
-                Id_Genre = parametrOfTypeCollection;
-                Epoch = null;
-            }
-            else
-            {
-                Epoch = parametrOfTypeCollection;
-                Id_Genre = null;
-            } 
-        }
-        public Collection() { }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public int? Epoch { get; set; } = null;
+        public int? GenreId { get; set; }
+        public Genre? Genre { get; set; } = null;
+        public ICollection<SongCollection> SongCollections { get; set; }
+        
     }
 }

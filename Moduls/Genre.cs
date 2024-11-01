@@ -4,20 +4,7 @@ namespace ModulsDB
 {
     public class Genre
     {
-        public int Id { get; init; }
-        public string Title { get; init; }
-        [InverseProperty("Genre")]
-        public virtual HashSet<Song> Songs { get; } = new();
-        [InverseProperty("Genre")]
-        public virtual HashSet<Album> Albums { get; } = new();
-        [InverseProperty("Genre")]
-        public virtual HashSet<Collection> Collections { get; } = new();
-
-        public Genre(int id, string title)
-        {
-            Id = id;
-            Title = title;
-        }
-        public Genre() { }
+        public int Id { get; set; }
+        public string Title { get; set; }
     }
 }

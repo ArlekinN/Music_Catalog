@@ -216,7 +216,7 @@
 
 <script>
     // выбор критериев поиска
-    function UpdateSearch(criterion, subCriterion) {
+    async function UpdateSearch(criterion, subCriterion) {
         const searchText = subCriterion ? `${criterion} ${subCriterion}` : criterion;
         document.getElementById('selectid_criterion_search').innerText = searchText;
     }
@@ -342,6 +342,27 @@
                 resultsContainer.appendChild(row);
             }
             else {
+                for (const album of albums) 
+                {
+                    const responseAlbum = await fetch(`/api/genres/${album.genreId}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (responseAlbum.ok === true) {
+                        var genre = await responseAlbum.json();
+                        console.log(genre);
+                        album.genre = genre;
+                    }
+                    const responseArtist = await fetch(`/api/artists/${album.artistId}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (responseArtist.ok === true) {
+                        var artist = await responseArtist.json();
+                        console.log(artist);
+                        album.artist = artist;
+                    }
+                }
                 const table = document.createElement("table");
                 table.innerHTML = `
                     <thead>
@@ -355,8 +376,8 @@
                     <tbody>
                         ${albums.map(album => `
                     <tr>
-                        <td>${album.title}</td>
-                        <td>${album.artist.name}</td>
+                        <td>${album.title}</td> 
+                        <td>${album.artist.name }</td>
                         <td>${album.yearRelease}</td>
                         <td>${album.genre.title}</td>
                     </tr>
@@ -382,7 +403,6 @@
         const artistInput = document.getElementById("value-artist-MArtist")
         if (artistInput) {
             const artist = artistInput.value;
-            console.log(artist)
             const response = await fetch("api/artists", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -399,6 +419,5 @@
             }
         }
     }
-
 
 </script>

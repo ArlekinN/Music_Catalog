@@ -5,19 +5,9 @@ namespace ModulsDB
 {
     public class Artist
     {
-        [Key]
-        public int Id { get; init; }
-        [Required]
-        public string Name { get; init; } = "";
-        [InverseProperty("Artist")]
-        public HashSet<Album> Albums { get; } = new();
-        [InverseProperty("Artist")]
-        public HashSet<Song> Songs { get; } = new();
-        public Artist(int id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-        public Artist() { }
+        public int Id { get; set; } 
+        public string Name { get; set; }
+        public ICollection<Album> Albums { get; set; } 
+        public ICollection<Song> Songs { get; set; }
     }
 }
