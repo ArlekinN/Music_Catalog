@@ -35,7 +35,19 @@
                 <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Альбом')">Альбом</p>
             </li>
             <li>
-                <p style="margin-block-start: 15px; color: aqua; " onclick="UpdateSearch('Сборник')">Сборник</p>
+                <div class="dropdown">
+                    Сборник
+                    <div class="dropdown-content">
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Название')">
+                            Название
+                        </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Эпоха')">
+                            Эпоха
+                        </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Жанр')">
+                            Жанр
+                        </p>
+                </div>
             </li>
         </ul>
     </div>
@@ -79,28 +91,16 @@
         <dialog id="windowSong" class="modalWindowData">
             <div style="display: flex; ">
                 <p class="value-parametr">Название</p>
-                <input class="value-input" />
+                <input class="value-input" id="input-title-MSong" />
             </div>
-            <!--<div style="display: flex;">
-                <p class="value-parametr">Артист</p>
-                <input class="value-input" />
-            </div>-->
             <div style="display: flex;">
                 <p class="value-parametr">Альбом</p>
-                <input class="value-input" />
+                <input class="value-input" id="input-album-MSong"/>
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Продолжительность</p>
-                <input class="value-input" />
+                <input class="value-input" id="input-duration-MSong" />
             </div>
-            <!--<div style="display: flex;">
-                <p class="value-parametr">Год релиза</p>
-                <input class="value-input" />
-            </div>-->
-            <!--<div style="display: flex;">
-                <p class="value-parametr">Жанр</p>
-                <input class="value-input" />
-            </div>-->
         </dialog>
 
         <! -- ОКНО ДЛЯ АЛЬБОМ -->
@@ -565,6 +565,9 @@
         else if (itemMenu1[0].innerText == "Альбом") {
             CreateAlbum();
         }
+        else if (itemMenu1[0].innerText == "Песня") {
+            CreateSong();
+        }
     }
     //артист
     async function CreateArtist() {
@@ -587,7 +590,7 @@
             }
         }
     }
-    // албом
+    // альбом
     async function CreateAlbum() {
         const albumInput = document.getElementById("value-album-MAlbum").value;
         const yearInput = parseInt(document.getElementById("value-year-MAlbum").value);
@@ -648,8 +651,50 @@
                 console.error("Ошибка:", errorText); 
             }
         }
-        
-        
+       
+    }
+    async function CreateSong() {
+        const titleSong = document.getElementById("input-title-MSong").value;
+        const albumSong = document.getElementById("input-album-MSong").value;
+        const durationSong = document.getElementById("input-duration-MSong").value;
+        // получение альбома
+        const responseAlbum = await fetch(`/api/albums/${albumSong}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (responseAlbum.ok == true) {
+            var album = await responseAlbum.json();
+        }
+        // получение типа альбома
+        const responseTypeAlbum = await fetch(`/api/typealbums/${album.typeAlbumId}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (responseTypeAlbum.ok == true) {
+            var typeAlbum = await responseTypeAlbum.json();
+        }
+        console.log(album.yearRelease, typeAlbum.genreId, typeAlbum.artistId, album.id )
+        // создание песни
+        const response = await fetch("api/songs", {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: titleSong,
+                duration: durationSong,
+                yearRelease: parseFloat(album.yearRelease),
+                genreId: typeAlbum.genreId,
+                artistId: typeAlbum.artistId,
+                albumId: album.id
+            })
+        });
+        if (response.ok === true) {
+
+        }
+        else {
+            const errorText = await response.text();
+            console.error("Ошибка:", errorText);
+        }
+
 
     }
     

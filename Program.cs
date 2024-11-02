@@ -55,6 +55,13 @@ namespace App
                 if (album == null) return Results.NotFound(new { message = "Альбом не найден" });
                 return Results.Json(album);
             });
+            app.MapGet("/api/albums/{title}", async (string title, ApplicationContext db) =>
+            {
+                Album? album = await db.Albums.FirstOrDefaultAsync(u => u.Title == title); ;
+
+                if (album == null) return Results.NotFound(new { message = "Альбом не найден" });
+                return Results.Json(album);
+            });
             // музыка
             app.MapGet("/api/songs", async (ApplicationContext db) =>
             {
@@ -113,6 +120,13 @@ namespace App
                 await db.TypeAlbums.AddAsync(typeAlbum);
                 await db.SaveChangesAsync();
                 return Results.Json(typeAlbum);
+            });
+            // песня
+            app.MapPost("/api/songs", async (ApplicationContext db, [FromBody] Song song) =>
+            {
+                await db.Songs.AddAsync(song);
+                await db.SaveChangesAsync();
+                return Results.Json(song);
             });
 
 
