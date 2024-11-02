@@ -129,6 +129,16 @@ namespace App
                 await db.SaveChangesAsync();
                 return Results.Json(song);
             });
+            // —борник
+            
+            app.MapPost("/api/collections", async (ApplicationContext db, [FromBody] Collection collection) =>
+            {
+                
+                await db.Collections.AddAsync(collection);
+                await db.SaveChangesAsync();
+                return Results.Json(collection);
+            });
+
 
 
             app.Run();
