@@ -12,8 +12,8 @@ using Music_Catalog;
 namespace Music_Catalog.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241101161446_CreateTables")]
-    partial class CreateTables
+    [Migration("20241102000712_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,15 +32,15 @@ namespace Music_Catalog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GenreId")
+                    b.Property<int?>("ArtistId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeAlbumId")
+                        .HasColumnType("int");
 
                     b.Property<int>("YearRelease")
                         .HasColumnType("int");
@@ -49,7 +49,7 @@ namespace Music_Catalog.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.HasIndex("GenreId");
+                    b.HasIndex("TypeAlbumId");
 
                     b.ToTable("Albums");
                 });
@@ -163,26 +163,45 @@ namespace Music_Catalog.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.ToTable("SongCollection");
+                    b.ToTable("SongCollections");
+                });
+
+            modelBuilder.Entity("ModulsDB.TypeAlbum", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("TypeAlbums");
                 });
 
             modelBuilder.Entity("ModulsDB.Album", b =>
                 {
-                    b.HasOne("ModulsDB.Artist", "Artist")
+                    b.HasOne("ModulsDB.Artist", null)
                         .WithMany("Albums")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ArtistId");
 
-                    b.HasOne("ModulsDB.Genre", "Genre")
+                    b.HasOne("ModulsDB.TypeAlbum", "TypeAlbum")
                         .WithMany()
-                        .HasForeignKey("GenreId")
+                        .HasForeignKey("TypeAlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Artist");
-
-                    b.Navigation("Genre");
+                    b.Navigation("TypeAlbum");
                 });
 
             modelBuilder.Entity("ModulsDB.Collection", b =>
@@ -240,6 +259,25 @@ namespace Music_Catalog.Migrations
                     b.Navigation("Song");
                 });
 
+            modelBuilder.Entity("ModulsDB.TypeAlbum", b =>
+                {
+                    b.HasOne("ModulsDB.Artist", "Artist")
+                        .WithMany("TypeAlbums")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ModulsDB.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artist");
+
+                    b.Navigation("Genre");
+                });
+
             modelBuilder.Entity("ModulsDB.Album", b =>
                 {
                     b.Navigation("Songs");
@@ -250,6 +288,8 @@ namespace Music_Catalog.Migrations
                     b.Navigation("Albums");
 
                     b.Navigation("Songs");
+
+                    b.Navigation("TypeAlbums");
                 });
 
             modelBuilder.Entity("ModulsDB.Collection", b =>

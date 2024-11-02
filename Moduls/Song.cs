@@ -13,9 +13,7 @@ namespace ModulsDB
         public  Album Album { get; set; }
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
-        [Required]
         public float Duration { get; set; }
-        [Required]
         public int YearRelease { get; set; }
         public  ICollection<SongCollection> SongCollections { get; set; }
 

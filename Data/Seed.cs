@@ -53,18 +53,36 @@ namespace Music_Catalog.Data
             var artistIC3PEAK = await context.Artists.FirstOrDefaultAsync(a => a.Name == "IC3PEAK");
             var artistThePolice = await context.Artists.FirstOrDefaultAsync(a => a.Name == "The Police");
 
+            // Инициализация данных для типов альбомов
+            
+            if (!context.TypeAlbums.Any())
+            {
+                var typeAlbums = new List<TypeAlbum> {
+                    new TypeAlbum { Genre = rapAndHipHopGenre, Artist = artistEminem},
+                    new TypeAlbum { Genre = rockGenre, Artist = artistTwoThousandYards},
+                    new TypeAlbum { Genre = rockGenre, Artist = artistIC3PEAK},
+                    new TypeAlbum { Genre = rockGenre, Artist = artistThePolice}
+                };
+                await context.TypeAlbums.AddRangeAsync(typeAlbums);
+                await context.SaveChangesAsync();
+            }
+            
             // Инициализация данных для альбомов
             if (!context.Albums.Any())
             {
+                var type1 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "Eminem");
+                var type2 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "Две тысячи ярдов");
+                var type3 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "IC3PEAK");
+                var type4 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "The Police");
                 var albums = new List<Album>
                 {
-                    new Album { Title = "Curtain Call: The Hits", YearRelease = 2005, Genre = rapAndHipHopGenre, Artist = artistEminem},
-                    new Album { Title = "The Eminem Show", YearRelease = 2002, Genre = rapAndHipHopGenre, Artist = artistEminem },
-                    new Album { Title = "Cпичка", YearRelease = 2023, Genre = rockGenre, Artist = artistTwoThousandYards },
-                    new Album { Title = "Когда меня не станет главное не забудь…", YearRelease = 2024, Genre = rockGenre, Artist = artistTwoThousandYards },
-                    new Album { Title = "Сказка", YearRelease = 2018, Genre = rockGenre, Artist = artistIC3PEAK },
-                    new Album { Title = "Certifiable", YearRelease = 2008, Genre = rockGenre, Artist = artistThePolice },
-                    new Album { Title = "Flexible Strategies", YearRelease = 2018, Genre = rockGenre, Artist = artistThePolice }
+                    new Album { Title = "Curtain Call: The Hits", YearRelease = 2005, TypeAlbum = type1},
+                    new Album { Title = "The Eminem Show", YearRelease = 2002, TypeAlbum = type1 },
+                    new Album { Title = "Cпичка", YearRelease = 2023,  TypeAlbum = type2},
+                    new Album { Title = "Когда меня не станет главное не забудь…", YearRelease = 2024,  TypeAlbum = type2 },
+                    new Album { Title = "Сказка", YearRelease = 2018,  TypeAlbum = type3 },
+                    new Album { Title = "Certifiable", YearRelease = 2008,  TypeAlbum = type4 },
+                    new Album { Title = "Flexible Strategies", YearRelease = 2018,  TypeAlbum = type4 }
                 };
 
                 await context.Albums.AddRangeAsync(albums);
@@ -142,7 +160,7 @@ namespace Music_Catalog.Data
             var businessSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Business");
 
             // Инициализация данных для связи между коллекциями и песнями 
-            if (!context.SongCollection.Any())
+            if (!context.SongCollections.Any())
             {
                 var songCollections = new List<SongCollection>
                 {
@@ -160,7 +178,7 @@ namespace Music_Catalog.Data
                     new SongCollection { Song = businessSong, Collection = collectionRockForever }
                 };
 
-                await context.SongCollection.AddRangeAsync(songCollections);
+                await context.SongCollections.AddRangeAsync(songCollections);
                 await context.SaveChangesAsync();
             }
         }

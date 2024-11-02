@@ -79,7 +79,17 @@ namespace App
 
                 return Results.Json(genre);
             });
+            // тип альбома
+            // жанр 
+            app.MapGet("/api/typealbums", (ApplicationContext db) => db.TypeAlbums.ToList());
+            app.MapGet("/api/typealbums/{id:int}", async (int id, ApplicationContext db) =>
+            {
+                TypeAlbum? typeAlbum = await db.TypeAlbums.FirstOrDefaultAsync(u => u.Id == id);
 
+                if (typeAlbum == null) return Results.NotFound(new { message = "Жанр не найден" });
+
+                return Results.Json(typeAlbum);
+            });
 
 
             // добавлени данных 
@@ -96,6 +106,13 @@ namespace App
                 await db.Albums.AddAsync(album);
                 await db.SaveChangesAsync();
                 return album;
+            });
+            // тип альбома
+            app.MapPost("/api/typealbums", async (ApplicationContext db, [FromBody] TypeAlbum typeAlbum) =>
+            {
+                await db.TypeAlbums.AddAsync(typeAlbum);
+                await db.SaveChangesAsync();
+                return Results.Json(typeAlbum);
             });
 
 
