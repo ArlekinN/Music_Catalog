@@ -14,5 +14,8 @@
             if (itemMenu2[0].innerText == "Создать сборник") {
                 CreateCollection();
             }
+            else {
+                AddSongCollection();
+            }
         }
     }

@@ -16,6 +16,8 @@
     <script src="/Scripts/AddData/CreateArtist.js"></script>
     <script src="/Scripts/AddData/CreateSong.js"></script>
     <script src="/Scripts/AddData/TotalCreate.js"></script>
+    <script src="/Scripts/AddData/CreateCollection.js"></script>
+    <script src="/Scripts/AddData/AddSongCollection.js"></script>
 </head>
 <body style="background-color:gray">
     <h1>Каталог Музыки</h1>
@@ -180,18 +182,11 @@
             <dialog id="windowCollectionAddSong" class="modalWindowData">
                 <div style="display: flex; ">
                     <p class="value-parametr">Название сборника</p>
-                    <input class="value-input" />
+                    <input class="value-input" id="input-collectionMAddSC" />
                 </div>
                 <div style="display: flex; ">
                     <p class="value-parametr">Название песни</p>
-                    <input class="value-input" />
-                </div>
-                <div style="padding-bottom:20px">
-                    <input type="radio" id="epoch" name="typeCollection" value="Жанр" />
-                    <label for="epoch">Жанр</label>
-
-                    <input type="radio" id="genre" name="typeCollection" value="Эпоха" />
-                    <label for="genre">Эпоха</label>
+                    <input class="value-input" id="input-songMAddSC" />
                 </div>
             </dialog>
         </dialog>
@@ -212,38 +207,6 @@
         ChangeActiveCollectionTypeMenu();
         GetGenres();
     }
-    async function CreateCollection() {
-        const titleSong = document.getElementById("input-collection-MCreateCollection").value;
-        const epoch = parseInt(document.getElementById("input-epoch-MCreateCollectons").value);
-        const genreInput = document.getElementById("input-genre-MCreateCollectons").value;
-        var genreid = null;
-        if (genreInput) {
-            const responseGenre = await fetch(`/api/genres/${genreInput}`, {
-                method: "GET",
-                headers: { "Accept": "application/json" }
-            });
-            if (responseGenre.ok === true) {
-                var genre = await responseGenre.json();
-                genreid = genre.id;
-            }
-        }
-        const response = await fetch("/api/collections", {
-            method: "POST",
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({
-                title: titleSong,
-                epoch: epoch,
-                genreId: genreid,
-            })
-        });
-        if (response.ok === true) {
-
-        }
-        else {
-            const error = await response.json();
-            console.log(error.message);
-        }
-        
-    }
+    
     
 </script>

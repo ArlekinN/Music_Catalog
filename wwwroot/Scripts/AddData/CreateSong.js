@@ -18,7 +18,6 @@
     if (responseTypeAlbum.ok == true) {
         var typeAlbum = await responseTypeAlbum.json();
     }
-    console.log(album.yearRelease, typeAlbum.genreId, typeAlbum.artistId, album.id)
     // создание песни
     const response = await fetch("api/songs", {
         method: "POST",

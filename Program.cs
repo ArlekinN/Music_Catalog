@@ -68,6 +68,14 @@ namespace App
                 return await db.Songs.ToListAsync();
 
             });
+            app.MapGet("/api/songs/{title}", async (string title, ApplicationContext db) =>
+            {
+                Song? song = await db.Songs.FirstOrDefaultAsync(u => u.Title == title); ;
+
+                if (song == null) return Results.NotFound(new { message = "Песня не найдена" });
+                return Results.Json(song);
+
+            });
             // жанр 
             app.MapGet("/api/genres", (ApplicationContext db) => db.Genres.ToList());
             app.MapGet("/api/genres/{id:int}", async (int id, ApplicationContext db) =>
@@ -99,6 +107,14 @@ namespace App
 
             //сборник
             app.MapGet("/api/collections", (ApplicationContext db) => db.Collections.ToList());
+            app.MapGet("/api/collections/{title}", async (string title, ApplicationContext db) =>
+            {
+                Collection? collection = await db.Collections.FirstOrDefaultAsync(u => u.Title == title);
+
+                if (collection == null) return Results.NotFound(new { message = "Коллекция не найден" });
+
+                return Results.Json(collection);
+            });
 
             // добавлени данных 
             // артист
@@ -137,6 +153,15 @@ namespace App
                 await db.Collections.AddAsync(collection);
                 await db.SaveChangesAsync();
                 return Results.Json(collection);
+            });
+
+            // SongCollection
+            app.MapPost("/api/songcollections", async (ApplicationContext db, [FromBody] SongCollection songCollection) =>
+            {
+
+                await db.SongCollections.AddAsync(songCollection);
+                await db.SaveChangesAsync();
+                return Results.Json(songCollection);
             });
 
 
