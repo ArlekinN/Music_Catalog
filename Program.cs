@@ -86,8 +86,7 @@ namespace App
 
                 return Results.Json(genre);
             });
-            // тип альбома
-            // жанр 
+            // тип альбома 
             app.MapGet("/api/typealbums", (ApplicationContext db) => db.TypeAlbums.ToList());
             app.MapGet("/api/typealbums/{id:int}", async (int id, ApplicationContext db) =>
             {
@@ -98,6 +97,8 @@ namespace App
                 return Results.Json(typeAlbum);
             });
 
+            //сборник
+            app.MapGet("/api/collections", (ApplicationContext db) => db.Collections.ToList());
 
             // добавлени данных 
             // артист
