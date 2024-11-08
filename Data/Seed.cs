@@ -189,8 +189,9 @@ namespace Music_Catalog.Data
                 };
 
                 await context.SongCollections.AddRangeAsync(songCollections);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync();    
             }
+
         }
     }
 }

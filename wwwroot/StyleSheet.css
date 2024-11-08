@@ -18,12 +18,15 @@
 
 .dropdown-content {
     display: none;
-    color: black;
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .dropdown:hover .dropdown-content {
-    display: block;
+    display: grid;
     color: greenyellow;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 10px;
+    text-align:left;
 }
 
 .dropdown-content-element {
@@ -110,17 +113,16 @@
 }
 
 .dropdown-results {
-    position: fixed;
+    position: absolute;
     display: block;
-    margin-top: 30px;
-    margin-right:30px;
+    left: 240px;
     background-color: white;
     border: 1px solid #ddd;
-    width: 200px;
-    max-height: 150px;
+    width: 100px;
     overflow-y: auto;
-    display: none; 
-    z-index:100;
+    overflow-x: hidden;
+    display: none;
+    z-index: 100;
 }
 
 .dropdown-item {
@@ -136,3 +138,10 @@ resultCreate {
     position: fixed;
     display: inline-block;
 }
+
+table {
+    table-layout: fixed;
+    width: 60%;
+    text-align: left;
+}
+

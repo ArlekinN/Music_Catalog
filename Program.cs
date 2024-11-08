@@ -131,7 +131,7 @@ namespace App
                             .Where(u => u.CollectionId == id)
                             .ToListAsync();
 
-                if (songCollection == null) return Results.NotFound(new { message = "Коллекция не найден" });
+                if (songCollection == null) return Results.NotFound(new { message = "Коллекции не найден" });
 
                 return Results.Ok(songCollection);
             });

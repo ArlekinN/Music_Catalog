@@ -38,6 +38,9 @@
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Жанр')">
                             Жанр
                         </p>
+                        <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Коллекция')">
+                            Коллекция
+                        </p>
 
                     </div>
                 </div>
@@ -73,7 +76,7 @@
         <input id="search" style="margin-block-start: 10px; z-index: 100" />
         <input type="button" value="Поиск" onclick="Search()" />
     </form>
-    <div id="resultsContainer" style="position: fixed; top: 200px; z-index: 99"></div>
+    <div id="resultsContainer" style="overflow-x: auto; height: 70%; position: fixed; top: 200px; z-index: 99 "></div>
     <input type="button" value="Добавить" onclick="window.windowAddData.showModal()" class="add-bth" />
 
     <! -- ДОБАВЛЕНИЕ ЧЕГО-ЛИБО -->
@@ -194,7 +197,6 @@
         <div style="position:absolute; display:inline-flex; bottom:5px">
 
             <input type="button" value="Создать" onclick="Create()" />
-            <div class="resultCreate">Выполнено</div>
 
         </div>
         <input type="button" value="Закрыть" style="position:absolute; right:10px" onclick="CloseAllWindow()" />
@@ -230,7 +232,8 @@
         else if (parametrFilter.includes("Музыка")) {
             if (parametrFilter.includes("Название")) GetMusic(parametrSearch, "Название");
             else if (parametrFilter.includes("Автор")) GetMusic(parametrSearch, "Автор");
-            else GetMusic(parametrSearch, "Жанр")
+            else if (parametrFilter.includes("Жанр")) GetMusic(parametrSearch, "Жанр");
+            else GetMusic(parametrSearch, "Коллекция");
         }
         else {
             if (parametrFilter.includes("Название")) GetCollection(parametrSearch, "Название");
@@ -395,5 +398,7 @@
             document.getElementById('resultsContainer').appendChild(table);
         }
     }
+
+
 
 </script>
