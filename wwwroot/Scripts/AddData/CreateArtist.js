@@ -10,7 +10,7 @@
             })
         });
         if (response.ok === true) {
-
+            CloseAllWindow();
         }
         else {
             const error = await response.json();

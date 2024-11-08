@@ -47,6 +47,7 @@ namespace Music_Catalog
                 .HasOne(a => a.Genre)
                 .WithMany()
                 .HasForeignKey(a => a.GenreId);
+            
 
             modelBuilder.Entity<TypeAlbum>()
                 .HasOne(a => a.Artist)
@@ -67,6 +68,10 @@ namespace Music_Catalog
                 .HasOne(s => s.Genre)
                 .WithMany()
                 .HasForeignKey(s => s.GenreId);
+            modelBuilder.Entity<Collection>()
+               .HasOne(c => c.Genre)
+               .WithMany()
+               .HasForeignKey(c => c.GenreId);
         }
     }
 }

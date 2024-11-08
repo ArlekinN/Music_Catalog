@@ -4,20 +4,19 @@
     <meta charset="utf-8" />
     <title>Музыка</title>
     <link rel="stylesheet" href="StyleSheet.css">
-    <script src="/Scripts/ChangeActiveElement.js"></script>
-    <script src="/Scripts/CloseWindows.js"></script>
-    <script src="/Scripts/Search.js"></script>
-    <script src="/Scripts/GetData/GetAlbum.js"></script>
-    <script src="/Scripts/GetData/GetArtist.js"></script>
-    <script src="/Scripts/GetData/GetCollection.js"></script>
-    <script src="/Scripts/GetData/GetDataForModalWindow.js"></script>
-    <script src="/Scripts/GetData/GetMusic.js"></script>
-    <script src="/Scripts/AddData/CreateAlbum.js"></script>
-    <script src="/Scripts/AddData/CreateArtist.js"></script>
-    <script src="/Scripts/AddData/CreateSong.js"></script>
-    <script src="/Scripts/AddData/TotalCreate.js"></script>
-    <script src="/Scripts/AddData/CreateCollection.js"></script>
-    <script src="/Scripts/AddData/AddSongCollection.js"></script>
+    <script src="/Scripts/GetData/GetAlbum.js" defer></script>
+    <script src="/Scripts/GetData/GetArtist.js" defer></script>
+    <script src="/Scripts/GetData/GetMusic.js" defer></script>
+    <script src="/Scripts/AddData/CreateAlbum.js" defer></script>
+    <script src="/Scripts/AddData/CreateArtist.js" defer></script>
+    <script src="/Scripts/AddData/CreateSong.js" defer></script>
+    <script src="/Scripts/AddData/TotalCreate.js" defer></script>
+    <script src="/Scripts/AddData/CreateCollection.js" defer></script>
+    <script src="/Scripts/AddData/AddSongCollection.js" defer></script>
+    <script src="/Scripts/GetData/GetDataForModalWindow.js" defer></script>
+    <script src="/Scripts/CloseWindows.js" defer></script>
+    <script src="/Scripts/ChangeActiveElement.js" defer></script>
+
 </head>
 <body style="background-color:gray">
     <h1>Каталог Музыки</h1>
@@ -31,7 +30,7 @@
                     <div class="dropdown-content">
 
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Название')">
-                           Название
+                            Название
                         </p>
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Автор')">
                             Автор
@@ -39,6 +38,7 @@
                         <p class="dropdown-content-element" onclick="UpdateSearch('Музыка', 'Жанр')">
                             Жанр
                         </p>
+
                     </div>
                 </div>
             </li>
@@ -61,6 +61,7 @@
                         <p class="dropdown-content-element" onclick="UpdateSearch('Сборник', 'Жанр')">
                             Жанр
                         </p>
+                    </div>
                 </div>
             </li>
         </ul>
@@ -72,7 +73,7 @@
         <input id="search" style="margin-block-start: 10px; z-index: 100" />
         <input type="button" value="Поиск" onclick="Search()" />
     </form>
-    <div id="resultsContainer" style="position: relative; top: 25px; z-index: 99"></div>
+    <div id="resultsContainer" style="position: fixed; top: 200px; z-index: 99"></div>
     <input type="button" value="Добавить" onclick="window.windowAddData.showModal()" class="add-bth" />
 
     <! -- ДОБАВЛЕНИЕ ЧЕГО-ЛИБО -->
@@ -97,7 +98,7 @@
         <dialog id="windowArtist" class="modalWindowData">
             <div style="display: flex;">
                 <p class="value-parametr">Имя</p>
-                <input class="value-input"  id="value-artist-MArtist" type="text"/>
+                <input class="value-input" id="value-artist-MArtist" type="text" />
             </div>
         </dialog>
 
@@ -109,7 +110,7 @@
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Альбом</p>
-                <input class="value-input" id="input-album-MSong"/>
+                <input class="value-input" id="input-album-MSong" />
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Продолжительность</p>
@@ -134,7 +135,7 @@
             </div>
             <div style="display: flex;">
                 <p class="value-parametr">Жанр</p>
-                <select name="genre" id="album-genre-select">
+                <select name="genre" id="album-genre-select" style="height:20px">
                     <option value="">Выберите жанр</option>
                 </select>
             </div>
@@ -190,10 +191,13 @@
                 </div>
             </dialog>
         </dialog>
-        <div style="position:absolute; bottom:5px">
+        <div style="position:absolute; display:inline-flex; bottom:5px">
+
             <input type="button" value="Создать" onclick="Create()" />
-            <input type="button" value="Закрыть" onclick="CloseAllWindow()" />
+            <div class="resultCreate">Выполнено</div>
+
         </div>
+        <input type="button" value="Закрыть" style="position:absolute; right:10px" onclick="CloseAllWindow()" />
     </dialog>
 
 </body>
@@ -206,7 +210,190 @@
         ChangeActiveCollectionMenu();
         ChangeActiveCollectionTypeMenu();
         GetGenres();
+    }   
+    // выбор критериев поиска
+    async function UpdateSearch(criterion, subCriterion) {
+        const searchText = subCriterion ? `${criterion} ${subCriterion}` : criterion;
+        document.getElementById('selectid_criterion_search').innerText = searchText;
     }
-    
-    
+
+    // поиск
+    async function Search() {
+        var parametrSearch = document.getElementById('search').value;
+        var parametrFilter = document.getElementById('selectid_criterion_search').innerText;
+        if (parametrFilter == "Автор") {
+            GetArtists(parametrSearch);
+        }
+        else if (parametrFilter.includes("Альбом")) {
+            GetAlbum(parametrSearch);
+        }
+        else if (parametrFilter.includes("Музыка")) {
+            if (parametrFilter.includes("Название")) GetMusic(parametrSearch, "Название");
+            else if (parametrFilter.includes("Автор")) GetMusic(parametrSearch, "Автор");
+            else GetMusic(parametrSearch, "Жанр")
+        }
+        else {
+            if (parametrFilter.includes("Название")) GetCollection(parametrSearch, "Название");
+            else if (parametrFilter.includes("Жанр")) GetCollection(parametrSearch, "Жанр");
+            else GetCollection(parametrSearch, "Эпоха");
+        }
+
+    }
+    async function GetCollection(parametrSearch, nameParameter) {
+        const responseCollections = await fetch("/api/collections", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
+        if (responseCollections.ok === true) {
+            var collections = await responseCollections.json();
+            if (collections.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>Нет результатов</td>`;
+                resultsContainer.appendChild(row);
+            }
+            else {
+                // определяются данные которые будут выводиться
+                if (nameParameter == "Название") {
+                    GetAllCollections(collections, parametrSearch);
+                }
+                else if (nameParameter == "Эпоха") {
+                    GetEpochCollections(collections, parametrSearch);
+                }
+                else {
+                    GetGenreCollections(collections, parametrSearch);
+                }
+            }
+
+        }
+    }
+    async function GetGenreCollection(collections) {
+        for (const collection of collections) {
+            if (collection.genreId) {
+                var responseGenre = await fetch(`/api/genres/${collection.genreId}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+                if (responseGenre.ok === true) {
+                    var genre = await responseGenre.json();
+                    collection.genre = genre;
+                }
+            }
+
+        }
+        return collections
+    }
+    // по названию
+    async function GetAllCollections(collections, parametrSearch) {
+        if (parametrSearch != "") {
+            collections = collections.filter(collection => collection.title.toLowerCase().includes(parametrSearch.toLowerCase()));
+        }
+        collections = await GetGenreCollection(collections);
+        if (collections.length === 0) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>Нет результатов</td>`;
+            resultsContainer.appendChild(row);
+        }
+        else {
+            const table = document.createElement("table");
+            table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Жанр</th>
+                    <th>Эпоха</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${collections.map(collection => `
+            <tr>
+                <td>${collection.title}</td> 
+                <td>${collection.genre ? collection.genre.title : "Нет жанра"}</td> 
+                <td>${collection.epoch ? collection.epoch : "Нет эпохи"}</td>
+            </tr>
+                `).join('')}
+                    </tbody>
+                `;
+            document.getElementById('resultsContainer').appendChild(table);
+        }
+    }
+    // по эпохе
+    async function GetEpochCollections(collections, parametrSearch) {
+        collections = collections.filter(collection => collection.genreId == null);
+        if (parametrSearch != "") {
+            collections = collections.filter(collection => collection.epoch == parametrSearch);
+        }
+        if (collections.length === 0) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>Нет результатов</td>`;
+            resultsContainer.appendChild(row);
+        }
+        else {
+            const table = document.createElement("table");
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Эпоха</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${collections.map(collection => `
+                <tr>
+                    <td>${collection.title}</td> 
+                    <td>${collection.epoch}</td>
+                </tr>
+            `).join('')}
+                </tbody>
+            `;
+            document.getElementById('resultsContainer').appendChild(table);
+        }
+    }
+    // по жанру
+    async function GetGenreCollections(collections, parametrSearch) {
+        collections = collections.filter(collection => collection.genreId != null)
+        if (parametrSearch != "") {
+            const responseGenre = await fetch(`/api/genres/${parametrSearch}`, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (responseGenre.ok === true) {
+                var genre = await responseGenre.json();
+                collections = collections.filter(collection => collection.genreId == genre.id);
+            }
+            else {
+                collections = []
+            }
+
+        }
+
+        collections = await GetGenreCollection(collections);
+        if (collections.length === 0) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>Нет результатов</td>`;
+            resultsContainer.appendChild(row);
+        }
+        else {
+            const table = document.createElement("table");
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Жанр</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${collections.map(collection => `
+                <tr>
+                    <td>${collection.title}</td> 
+                    <td>${collection.genre.title}</td> 
+                </tr>
+            `).join('')}
+                </tbody>
+            `;
+            document.getElementById('resultsContainer').appendChild(table);
+        }
+    }
+
 </script>

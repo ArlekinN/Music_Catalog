@@ -48,6 +48,7 @@ namespace Music_Catalog.Data
             // Получение всех жанров и артистов для создания альбомов
             var rockGenre = await context.Genres.FirstOrDefaultAsync(g => g.Title == "Rock");
             var rapAndHipHopGenre = await context.Genres.FirstOrDefaultAsync(g => g.Title == "Rap and Hip-hop");
+           
             var artistEminem = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Eminem");
             var artistTwoThousandYards = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Две тысячи ярдов");
             var artistIC3PEAK = await context.Artists.FirstOrDefaultAsync(a => a.Name == "IC3PEAK");
@@ -65,15 +66,20 @@ namespace Music_Catalog.Data
                 };
                 await context.TypeAlbums.AddRangeAsync(typeAlbums);
                 await context.SaveChangesAsync();
+
             }
             
             // Инициализация данных для альбомов
             if (!context.Albums.Any())
             {
                 var type1 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "Eminem");
+                artistEminem.TypeAlbums.Add(type1);
                 var type2 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "Две тысячи ярдов");
+                artistTwoThousandYards.TypeAlbums.Add(type2);
                 var type3 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "IC3PEAK");
+                artistIC3PEAK.TypeAlbums.Add(type3);
                 var type4 = await context.TypeAlbums.FirstOrDefaultAsync(g => g.Artist.Name == "The Police");
+                artistThePolice.TypeAlbums.Add(type4);
                 var albums = new List<Album>
                 {
                     new Album { Title = "Curtain Call: The Hits", YearRelease = 2005, TypeAlbum = type1},
@@ -139,7 +145,8 @@ namespace Music_Catalog.Data
                 {
                     new Collection { Title = "20x", Epoch = 2020 },
                     new Collection { Title = "10x", Epoch = 2010 },
-                    new Collection { Title = "Rock Forever", Genre = rockGenre }
+                    new Collection { Title = "Rock Forever", Genre = rockGenre },
+                    new Collection { Title = "My Indie", Genre = indieGenre }
                 };
 
                 await context.Collections.AddRangeAsync(collections);
@@ -149,10 +156,11 @@ namespace Music_Catalog.Data
             var collection20x = await context.Collections.FirstOrDefaultAsync(c => c.Title == "20x");
             var collection10x = await context.Collections.FirstOrDefaultAsync(c => c.Title == "10x");
             var collectionRockForever = await context.Collections.FirstOrDefaultAsync(c => c.Title == "Rock Forever");
+            var collectionMyIndie = await context.Collections.FirstOrDefaultAsync(c => c.Title == "My Indie");
 
             var drivenToTearsSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Driven To Tears");
             var deadEndJobSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Dead End Job");
-            var считалочкаSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Считалочка");
+            var schitalochkaSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Считалочка");
             var messageInABottleSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Message In A Bottle");
             var curtainsUpSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "Curtains Up");
             var whiteAmericaSong = await context.Songs.FirstOrDefaultAsync(s => s.Title == "White America");
@@ -166,16 +174,18 @@ namespace Music_Catalog.Data
                 {
                     new SongCollection { Song = drivenToTearsSong, Collection = collection20x },
                     new SongCollection { Song = deadEndJobSong, Collection = collection20x },
-                    new SongCollection { Song = считалочкаSong, Collection = collection20x },
+                    new SongCollection { Song = schitalochkaSong, Collection = collection20x },
 
                     new SongCollection { Song = messageInABottleSong, Collection = collection10x },
-                    new SongCollection { Song = curtainsUpSong, Collection = collection10x },
+                    new SongCollection { Song = curtainsUpSong, Collection = collection10x},
                     new SongCollection { Song = whiteAmericaSong, Collection = collection10x },
 
                     new SongCollection { Song = landlordSong, Collection = collectionRockForever },
                     new SongCollection { Song = deadEndJobSong, Collection = collectionRockForever },
                     new SongCollection { Song = messageInABottleSong, Collection = collectionRockForever },
-                    new SongCollection { Song = businessSong, Collection = collectionRockForever }
+                    new SongCollection { Song = businessSong, Collection = collectionRockForever },
+
+                    new SongCollection { Song = schitalochkaSong, Collection = collectionMyIndie }
                 };
 
                 await context.SongCollections.AddRangeAsync(songCollections);

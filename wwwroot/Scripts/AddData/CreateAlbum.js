@@ -51,7 +51,7 @@
                 })
             });
             if (response.ok === true) {
-
+                CloseAllWindow();
             }
             else {
                 const errorText = await response.text(); 

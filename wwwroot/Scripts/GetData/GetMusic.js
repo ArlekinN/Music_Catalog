@@ -8,13 +8,13 @@
         if (response.ok === true) {
             var songs = await response.json();
             if (parametrSearch != "") {
-                if (nameParameter == "Название") {
+                if (nameParameter == "Название") { // поиск по названию
                     songs = songs.filter(song => song.title.toLowerCase().includes(parametrSearch.toLowerCase()));
                 }
-                else if (nameParameter == "Жанр") {
+                else if (nameParameter == "Жанр") { // поиск по жанру
                     const responseGenre = await fetch(`/api/genres/${parametrSearch}`, {
                         method: "GET",
-                        headers: { "Accept": "application/json"},
+                        headers: { "Accept": "application/json" },
                     });
                     if (responseGenre.ok === true) {
                         var genre = await responseGenre.json();
@@ -24,9 +24,9 @@
                     else {
                         const error = await responseGenre.json();
                         console.log(error.message);
-                    } 
+                    }
                 }
-                else {
+                else{ // поиск по автору
                     const responseArtist = await fetch(`/api/artists/${parametrSearch}`, {
                         method: "GET",
                         headers: { "Accept": "application/json" },
@@ -39,8 +39,9 @@
                     else {
                         const error = await responseArtist.json();
                         console.log(error.message);
-                    } 
+                    }
                 }
+                
                 
             }
             if (songs.length === 0) {

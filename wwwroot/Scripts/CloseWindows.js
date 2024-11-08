@@ -4,6 +4,7 @@ function CloseAllWindow() {
     CloseCollectionWindow();
     CloseCollectionTypeWindow();
     windowAddData.close();
+    
 }
 function CloseMainWindow() {
     window.windowArtist.close();

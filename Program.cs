@@ -76,6 +76,15 @@ namespace App
                 return Results.Json(song);
 
             });
+            app.MapGet("/api/songs/{id:int}", async (int id, ApplicationContext db) =>
+            {
+                Song? song = await db.Songs.FirstOrDefaultAsync(u => u.Id == id); ;
+
+                if (song == null) return Results.NotFound(new { message = "Песня не найдена" });
+                return Results.Json(song);
+
+            });
+            
             // жанр 
             app.MapGet("/api/genres", (ApplicationContext db) => db.Genres.ToList());
             app.MapGet("/api/genres/{id:int}", async (int id, ApplicationContext db) =>
@@ -115,6 +124,18 @@ namespace App
 
                 return Results.Json(collection);
             });
+            // songCollection
+            app.MapGet("/api/songcollections/{id:int}", async (int id, ApplicationContext db) =>
+            {
+               var songCollection = await db.SongCollections
+                            .Where(u => u.CollectionId == id)
+                            .ToListAsync();
+
+                if (songCollection == null) return Results.NotFound(new { message = "Коллекция не найден" });
+
+                return Results.Ok(songCollection);
+            });
+           
 
             // добавлени данных 
             // артист
@@ -147,9 +168,20 @@ namespace App
             });
             // Сборник
             
-            app.MapPost("/api/collections", async (ApplicationContext db, [FromBody] Collection collection) =>
+            app.MapPost("/api/collections", async (ApplicationContext db, [FromBody] CollectionRequest request) =>
             {
-                
+                DirectorCollection directorCollection = new DirectorCollection();
+                Collection collection;
+                if (request.Genre == null)
+                {
+                    CollectionEpochBuilder builder = new CollectionEpochBuilder();
+                    collection = directorCollection.Director(builder, request.Epoch, 0, "", request.Title);
+                }
+                else
+                {
+                    CollectionGenreBuilder builder = new CollectionGenreBuilder();
+                    collection = directorCollection.Director(builder, 0, request.Genre.Id, request.Genre.Title, request.Title);
+                }
                 await db.Collections.AddAsync(collection);
                 await db.SaveChangesAsync();
                 return Results.Json(collection);

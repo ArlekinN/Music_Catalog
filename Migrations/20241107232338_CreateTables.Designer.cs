@@ -12,8 +12,8 @@ using Music_Catalog;
 namespace Music_Catalog.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241102000712_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241107232338_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,9 +32,6 @@ namespace Music_Catalog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ArtistId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -46,8 +43,6 @@ namespace Music_Catalog.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtistId");
 
                     b.HasIndex("TypeAlbumId");
 
@@ -191,10 +186,6 @@ namespace Music_Catalog.Migrations
 
             modelBuilder.Entity("ModulsDB.Album", b =>
                 {
-                    b.HasOne("ModulsDB.Artist", null)
-                        .WithMany("Albums")
-                        .HasForeignKey("ArtistId");
-
                     b.HasOne("ModulsDB.TypeAlbum", "TypeAlbum")
                         .WithMany()
                         .HasForeignKey("TypeAlbumId")
@@ -285,8 +276,6 @@ namespace Music_Catalog.Migrations
 
             modelBuilder.Entity("ModulsDB.Artist", b =>
                 {
-                    b.Navigation("Albums");
-
                     b.Navigation("Songs");
 
                     b.Navigation("TypeAlbums");

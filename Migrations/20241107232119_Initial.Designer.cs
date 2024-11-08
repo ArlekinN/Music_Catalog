@@ -12,8 +12,8 @@ using Music_Catalog;
 namespace Music_Catalog.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241102004239_CreateTables")]
-    partial class CreateTables
+    [Migration("20241107232119_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
