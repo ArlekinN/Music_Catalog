@@ -16,7 +16,7 @@
   2. Билдер. Так как в классе Collection поля жанра и эпохи в зависимости от типа сборника могут равняться null, и в случае пустого поля названия при создании коллекции оно формируется по разному принципу,
   то для создания каждого типа сборника создается отдельный класс.</br>
   Создание коллекции реализуется через классы:
-    - CollectionBuilder
-    - CollectionEpochBuilder
-    - CollectionGenreBuilder
-    - DirectorCollection
+    * CollectionBuilder
+    * CollectionEpochBuilder
+    * CollectionGenreBuilder
+    * DirectorCollection
