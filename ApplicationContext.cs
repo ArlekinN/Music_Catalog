@@ -57,12 +57,14 @@ namespace Music_Catalog
             modelBuilder.Entity<Song>()
                 .HasOne(s => s.Album)
                 .WithMany(a => a.Songs)
-                .HasForeignKey(s => s.AlbumId);
-     
+                .HasForeignKey(s => s.AlbumId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Song>()
                 .HasOne(s => s.Artist)
                 .WithMany(ar => ar.Songs)
-                .HasForeignKey(s => s.ArtistId);
+                .HasForeignKey(s => s.ArtistId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Song>()
                 .HasOne(s => s.Genre)

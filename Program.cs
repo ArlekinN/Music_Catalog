@@ -18,7 +18,6 @@ namespace App
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-
                 await context.Database.MigrateAsync();
 
                 await Seed.SeedData(context);

@@ -12,8 +12,8 @@ using Music_Catalog;
 namespace Music_Catalog.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241107232119_Initial")]
-    partial class Initial
+    [Migration("20241109030637_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -209,13 +209,13 @@ namespace Music_Catalog.Migrations
                     b.HasOne("ModulsDB.Album", "Album")
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ModulsDB.Artist", "Artist")
                         .WithMany("Songs")
                         .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ModulsDB.Genre", "Genre")
